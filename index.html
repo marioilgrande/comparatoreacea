@@ -110,7 +110,7 @@
         <li>Inserisci il <strong>nome e cognome</strong> del cliente.</li>
         <li>Seleziona il <strong>mese di riferimento</strong> per il calcolo.</li>
         <li>Inserisci il consumo di <strong>luce</strong> (in kWh) e/o di <strong>gas</strong> (in mc).</li>
-        <li>Seleziona la <strong>fatturazione</strong> (Mensile, Bimestrale, ecc.).</li>
+        <li>Seleziona la <strong>fatturazione</strong> (Mensile, Bimestrale, Trimestrale o Quadrimestrale).</li>
         <li>Premi il pulsante <strong>"Calcola"</strong> per ottenere le offerte disponibili.</li>
         <li>Per stampare una specifica offerta, clicca sul pulsante <strong>"Stampa Offerta"</strong>.</li>
         <li>Per condividere un'offerta su WhatsApp, clicca su <strong>"Invia su WhatsApp"</strong>.</li>
@@ -129,7 +129,6 @@
       <div class="form-group">
         <label for="mese">Mese di riferimento</label>
         <select id="mese" required>
-          <option value="maggio">Maggio 2024</option>
           <option value="giugno">Giugno 2024</option>
           <option value="luglio">Luglio 2024</option>
           <option value="agosto">Agosto 2024</option>
@@ -138,7 +137,9 @@
           <option value="novembre">Novembre 2024</option>
           <option value="dicembre">Dicembre 2024</option>
           <option value="gennaio">Gennaio 2025</option>
+          <option value="febbraio">Febbraio 2025</option>
         </select>
+      </div>
       <!-- Menu a tendina per la fatturazione -->
       <div class="form-group">
         <label for="fatturazione">Fatturazione</label>
@@ -148,7 +149,6 @@
           <option value="3">Trimestrale (3 mesi)</option>
           <option value="4">Quadrimestrale (4 mesi)</option>
         </select>
-      </div>
       <div class="form-group">
         <label for="consumoLuce">Consumo Luce (kWh)</label>
         <input type="number" id="consumoLuce" placeholder="Inserisci il consumo in kWh">
@@ -165,7 +165,6 @@
         <label for="costoAttualeGas">Spesa attuale per gas (€)</label>
         <input type="number" id="costoAttualeGas" placeholder="Inserisci spesa attuale per gas">
       </div>
-      
       </div>
       <button type="button" onclick="calcolaCosto()">Calcola</button>
     </form>
@@ -175,61 +174,55 @@
     </div>
   </div>
   <script>
-    // Nuovi valori PUN (energia elettrica) e PSV (gas) per i mesi maggio 2024 - gennaio 2025
+    // Nuovi valori PUN (energia elettrica) e PSV (gas) per i mesi giugno 2024 - febbraio 2025
     const offertePerMese = {
-      maggio: { 
-        "ACEA START LUCE": {pun: 0.09488, spreadLuce: 0.018, costoFisso: 10},
-        "ACEA START GAS": {psv: 0.34968, spread: 0.035, costoFisso: 10},
-        "ACEA FLEXY SPECIAL LUCE": {pun: 0.09488, spreadLuce: 0.03, costoFisso: 13},
-        "ACEA FLEXY SPECIAL GAS": {psv: 0.34968, spread: 0.08, costoFisso: 13}
-      },
       giugno: { 
         "ACEA START LUCE": {pun: 0.10317, spreadLuce: 0.018, costoFisso: 10},
         "ACEA START GAS": {psv: 0.38235, spread: 0.035, costoFisso: 10},
-        "ACEA FLEXY SPECIAL LUCE": {pun: 0.10317, spreadLuce: 0.03, costoFisso: 13},
-        "ACEA FLEXY SPECIAL GAS": {psv: 0.38235, spread: 0.08, costoFisso: 13}
+        "ACEA START BUSINESS LUCE": {pun: 0.10317, spreadLuce: 0.03, costoFisso: 13},
+        "ACEA START BUSINESS GAS": {psv: 0.38235, spread: 0.08, costoFisso: 13}
       },
       luglio: { 
         "ACEA START LUCE": {pun: 0.11232, spreadLuce: 0.018, costoFisso: 10},
         "ACEA START GAS": {psv: 0.37504, spread: 0.035, costoFisso: 10},
-        "ACEA FLEXY SPECIAL LUCE": {pun: 0.11232, spreadLuce: 0.03, costoFisso: 13},
-        "ACEA FLEXY SPECIAL GAS": {psv: 0.37504, spread: 0.08, costoFisso: 13}
+        "ACEA START BUSINESS LUCE": {pun: 0.11232, spreadLuce: 0.03, costoFisso: 13},
+        "ACEA START BUSINESS GAS": {psv: 0.37504, spread: 0.08, costoFisso: 13}
       },
       agosto: { 
         "ACEA START LUCE": {pun: 0.12844, spreadLuce: 0.018, costoFisso: 10},
         "ACEA START GAS": {psv: 0.42952, spread: 0.035, costoFisso: 10},
-        "ACEA FLEXY SPECIAL LUCE": {pun: 0.12844, spreadLuce: 0.03, costoFisso: 13},
-        "ACEA FLEXY SPECIAL GAS": {psv: 0.42952, spread: 0.08, costoFisso: 13}
+        "ACEA START BUSINESS LUCE": {pun: 0.12844, spreadLuce: 0.03, costoFisso: 13},
+        "ACEA START BUSINESS GAS": {psv: 0.42952, spread: 0.08, costoFisso: 13}
       },
       settembre: { 
         "ACEA START LUCE": {pun: 0.11713, spreadLuce: 0.018, costoFisso: 10},
         "ACEA START GAS": {psv: 0.41119, spread: 0.035, costoFisso: 10},
-        "ACEA FLEXY SPECIAL LUCE": {pun: 0.11713, spreadLuce: 0.03, costoFisso: 13},
-        "ACEA FLEXY SPECIAL GAS": {psv: 0.41119, spread: 0.08, costoFisso: 13}
+        "ACEA START BUSINESS LUCE": {pun: 0.11713, spreadLuce: 0.03, costoFisso: 13},
+        "ACEA START BUSINESS GAS": {psv: 0.41119, spread: 0.08, costoFisso: 13}
       },
       ottobre: { 
         "ACEA START LUCE": {pun: 0.11669, spreadLuce: 0.018, costoFisso: 10},
         "ACEA START GAS": {psv: 0.43269, spread: 0.035, costoFisso: 10},
-        "ACEA FLEXY SPECIAL LUCE": {pun: 0.11669, spreadLuce: 0.03, costoFisso: 13},
-        "ACEA FLEXY SPECIAL GAS": {psv: 0.43269, spread: 0.08, costoFisso: 13}
+        "ACEA START BUSINESS LUCE": {pun: 0.11669, spreadLuce: 0.03, costoFisso: 13},
+        "ACEA START BUSINESS GAS": {psv: 0.43269, spread: 0.08, costoFisso: 13}
       },
       novembre: { 
         "ACEA START LUCE": {pun: 0.13089, spreadLuce: 0.018, costoFisso: 10},
         "ACEA START GAS": {psv: 0.47799, spread: 0.035, costoFisso: 10},
-        "ACEA FLEXY SPECIAL LUCE": {pun: 0.13089, spreadLuce: 0.03, costoFisso: 13},
-        "ACEA FLEXY SPECIAL GAS": {psv: 0.47799, spread: 0.08, costoFisso: 13}
+        "ACEA START BUSINESS LUCE": {pun: 0.13089, spreadLuce: 0.03, costoFisso: 13},
+        "ACEA START BUSINESS GAS": {psv: 0.47799, spread: 0.08, costoFisso: 13}
       },
       dicembre: { 
         "ACEA START LUCE": {pun: 0.13506, spreadLuce: 0.018, costoFisso: 10},
         "ACEA START GAS": {psv: 0.50417, spread: 0.035, costoFisso: 10},
-        "ACEA FLEXY SPECIAL LUCE": {pun: 0.13506, spreadLuce: 0.03, costoFisso: 13},
-        "ACEA FLEXY SPECIAL GAS": {psv: 0.50417, spread: 0.08, costoFisso: 13}
+        "ACEA START BUSINESS LUCE": {pun: 0.13506, spreadLuce: 0.03, costoFisso: 13},
+        "ACEA START BUSINESS GAS": {psv: 0.50417, spread: 0.08, costoFisso: 13}
       },
       gennaio: { 
         "ACEA START LUCE": {pun: 0.14303, spreadLuce: 0.018, costoFisso: 10},
         "ACEA START GAS": {psv: 0.52808, spread: 0.035, costoFisso: 10},
-        "ACEA FLEXY SPECIAL LUCE": {pun: 0.14303, spreadLuce: 0.03, costoFisso: 13},
-        "ACEA FLEXY SPECIAL GAS": {psv: 0.52808, spread: 0.08, costoFisso: 13}
+        "ACEA START BUSINESS LUCE": {pun: 0.14303, spreadLuce: 0.03, costoFisso: 13},
+        "ACEA START BUSINESS GAS": {psv: 0.52808, spread: 0.08, costoFisso: 13}
       }
     };
 
@@ -252,13 +245,13 @@
 
       for (const [nomeOfferta, valori] of Object.entries(offerte)) {
         let costoEnergia = 0;
-        // Offerte luce
+        // Offerte luce: aggiunge DISPACCIAMENTO 0,020
         if (valori.pun !== undefined) {
-          costoEnergia = consumoLuce * (valori.pun + valori.spreadLuce);
+          costoEnergia = consumoLuce * (valori.pun + valori.spreadLuce + 0.02);
         } 
-        // Offerte gas
+        // Offerte gas: aggiunge CCR 0,029
         else if (valori.psv !== undefined) {
-          costoEnergia = consumoGas * (valori.psv + valori.spread);
+          costoEnergia = consumoGas * (valori.psv + valori.spread + 0.029);
         }
         costoEnergia = parseFloat(costoEnergia.toFixed(2));
 
@@ -380,4 +373,3 @@ Per ulteriori dettagli o chiarimenti, non esitare a contattarci!
   </script>
 </body>
 </html>
-
