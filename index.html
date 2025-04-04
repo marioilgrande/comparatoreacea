@@ -293,9 +293,13 @@
         if (valori.pun !== undefined) {
           costoEnergia = consumoLuce * (valori.pun + valori.spreadLuce + 0.02);
         } 
-        // Offerte gas: aggiunge CCR 0,029
+        // Offerte gas: solo per ACEA FLEX GAS NON viene aggiunto il coefficiente CCR
         else if (valori.psv !== undefined) {
-          costoEnergia = consumoGas * (valori.psv + valori.spread + 0.029);
+          if (nomeOfferta === "ACEA FLEX GAS") {
+            costoEnergia = consumoGas * (valori.psv + valori.spread);
+          } else {
+            costoEnergia = consumoGas * (valori.psv + valori.spread + 0.029);
+          }
         }
         costoEnergia = parseFloat(costoEnergia.toFixed(2));
 
