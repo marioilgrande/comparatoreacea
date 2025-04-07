@@ -161,7 +161,7 @@
       <ol>
         <li>Inserisci il <strong>nome e cognome</strong> del cliente.</li>
         <li>Seleziona il <strong>tipo di cliente</strong> (Domestico o Business).</li>
-        <li>Seleziona il <strong>Periodo di fatturazione</strong> (uno o più mesi).</li>
+        <li>Seleziona il <strong>PERIODO DI FATTURAZIONE</strong> (uno o più mesi).</li>
         <li>Inserisci il consumo di <strong>luce</strong> (in kWh) e/o di <strong>gas</strong> (in mc).</li>
         <li>Premi il pulsante <strong>"Calcola"</strong> per ottenere le offerte attivabili.</li>
         <li>Per stampare una specifica offerta, clicca su <strong>"Stampa Offerta"</strong>.</li>
@@ -203,7 +203,7 @@
         <input type="number" id="consumoLuce" placeholder="Inserisci il consumo in kWh">
       </div>
       <div class="form-group">
-        <label for="costoAttualeLuce">Spesa materia energia</label>
+        <label for="costoAttualeLuce">Spesa attuale per luce (Spesa Materia Energia Attuale)</label>
         <input type="number" id="costoAttualeLuce" placeholder="Inserisci spesa attuale per luce">
       </div>
       <div class="form-group">
@@ -211,7 +211,7 @@
         <input type="number" id="consumoGas" placeholder="Inserisci il consumo in mc">
       </div>
       <div class="form-group">
-        <label for="costoAttualeGas">Spesa gas naturale</label>
+        <label for="costoAttualeGas">Spesa attuale per gas (Spesa Gas Naturale Attuale)</label>
         <input type="number" id="costoAttualeGas" placeholder="Inserisci spesa attuale per gas">
       </div>
       <button type="button" onclick="calcolaCosto()">Calcola</button>
@@ -313,7 +313,7 @@
 
       const consumoLuce = parseFloat(document.getElementById("consumoLuce").value) || 0;
       const consumoGas = parseFloat(document.getElementById("consumoGas").value) || 0;
-      // I valori "Spesa Attuale" vanno usati così come inseriti (non moltiplicati per il periodo)
+      // I valori di spesa attuale vanno usati così come inseriti, per il confronto
       const costoAttualeLuce = parseFloat(document.getElementById("costoAttualeLuce").value) || 0;
       const costoAttualeGas = parseFloat(document.getElementById("costoAttualeGas").value) || 0;
       const tipoCliente = document.getElementById("tipoCliente").value;
@@ -321,14 +321,14 @@
       const risultatiOfferte = document.getElementById("risultatiOfferte");
       risultatiOfferte.innerHTML = "";
 
-      // Usa il primo mese selezionato come riferimento per iterare sulle offerte (struttura identica)
+      // Usa il primo mese selezionato come riferimento per iterare sulle offerte
       const referenceOffers = offertePerMese[selectedMonths[0]];
 
       for (const [nomeOfferta, _] of Object.entries(referenceOffers)) {
         // Filtra per tipo di cliente:
         if (tipoCliente === "domestico" && nomeOfferta.includes("FLEXY SPECIAL")) continue;
         if (tipoCliente === "business" && !nomeOfferta.includes("FLEXY SPECIAL")) continue;
-        // Filtra per tipologia in base ai campi compilati (se solo luce o solo gas)
+        // Filtra per tipologia in base ai campi compilati
         const isLuceOffer = nomeOfferta.includes("LUCE");
         const isGasOffer = nomeOfferta.includes("GAS");
         if (consumoLuce > 0 && consumoGas === 0 && !isLuceOffer) continue;
@@ -356,17 +356,19 @@
         if (count === 0) continue;
 
         if (isLuceOffer) {
-          // Calcola la media dei valori PUN e spread (per luce) sui mesi selezionati
           const avgPun = sumPun / count;
           const avgSpreadLuce = sumSpreadLuce / count;
           const avgCostoFissoLuce = sumCostoFissoLuce / count;
-          // Calcola il costo energia offerta: 
-          // [consumoLuce * (media PUN)] + [consumoLuce * (spreadLuce)] + [consumoLuce * 0.02]  
-          const energyCost = consumoLuce * (avgPun) + consumoLuce * (avgSpreadLuce) + consumoLuce * 0.02;
+          // Calcola il costo energia offerta per la luce:
+          // (consumoLuce * (media PUN + media Spread + 0,02))
+          const energyCost = consumoLuce * (avgPun + avgSpreadLuce + 0.02);
           const fixedCost = avgCostoFissoLuce * nMonths;
           const costoTotale = energyCost + fixedCost;
-          // La spesa attuale per luce viene usata così com'è (valore della bolletta attuale)
+          // La spesa attuale viene presa così come inserita (valore totale della bolletta attuale)
           const differenza = parseFloat((costoTotale - costoAttualeLuce).toFixed(2));
+          const messaggioDiff = differenza < 0 
+            ? "Risparmio con fornitura ACEA: € " + Math.abs(differenza) 
+            : "L'OFFERTA HA UN COSTO SUPERIORE DI: € " + differenza;
 
           let extraInfo = "";
           let extraClass = "";
@@ -386,7 +388,7 @@
               <p><strong>Totale Offerta: € ${costoTotale.toFixed(2)}</strong></p>
               <p>Spesa Materia Energia Attuale: € ${costoAttualeLuce.toFixed(2)}</p>
               <p style="color: ${differenza < 0 ? "green" : "red"};">
-                <strong>Risparmio con fornitura ACEA: € ${differenza}</strong>
+                <strong>${messaggioDiff}</strong>
               </p>
               <button type="button" onclick="stampaOfferta('${nomeOfferta}', '${selectedMonths.join(", ")}', ${energyCost}, ${fixedCost}, ${costoTotale}, ${costoAttualeLuce})">
                 Stampa Offerta
@@ -401,14 +403,16 @@
           const avgSpreadGas = sumSpreadGas / count;
           const avgCostoFissoGas = sumCostoFissoGas / count;
           let coeff = 0.029;
-          if (nomeOfferta === "ACEA FLEX GAS") { // Per ACEA FLEX GAS non aggiungiamo CCR
-            coeff = 0;
+          if (nomeOfferta === "ACEA FLEX GAS") {
+            coeff = 0; // Per ACEA FLEX GAS non aggiungiamo CCR
           }
-          // Calcola il costo energia offerta per il gas
-          const energyCost = consumoGas * (avgPsv) + consumoGas * (avgSpreadGas) + consumoGas * coeff;
+          const energyCost = consumoGas * (avgPsv + avgSpreadGas + coeff);
           const fixedCost = avgCostoFissoGas * nMonths;
           const costoTotale = energyCost + fixedCost;
           const differenza = parseFloat((costoTotale - costoAttualeGas).toFixed(2));
+          const messaggioDiff = differenza < 0 
+            ? "Risparmio con fornitura ACEA: € " + Math.abs(differenza) 
+            : "L'OFFERTA HA UN COSTO SUPERIORE DI: € " + differenza;
 
           let extraInfo = "";
           let extraClass = "";
@@ -428,7 +432,7 @@
               <p><strong>Totale Offerta: € ${costoTotale.toFixed(2)}</strong></p>
               <p>Spesa Gas Naturale Attuale: € ${costoAttualeGas.toFixed(2)}</p>
               <p style="color: ${differenza < 0 ? "green" : "red"};">
-                <strong>Risparmio con fornitura ACEA: € ${differenza}</strong>
+                <strong>${messaggioDiff}</strong>
               </p>
               <button type="button" onclick="stampaOfferta('${nomeOfferta}', '${selectedMonths.join(", ")}', ${energyCost}, ${fixedCost}, ${costoTotale}, ${costoAttualeGas})">
                 Stampa Offerta
@@ -448,6 +452,9 @@
       const differenza = parseFloat((costoTotale - costoAttualeTotal).toFixed(2));
       const tipoSpesa = nomeOfferta.includes("GAS") ? "Spesa Gas Naturale" : "Spesa Materia Energia";
       const coloreDifferenza = differenza < 0 ? "green" : "red";
+      const messaggioDiff = differenza < 0 
+          ? "Risparmio con fornitura ACEA: € " + Math.abs(differenza)
+          : "L'OFFERTA HA UN COSTO SUPERIORE DI: € " + differenza;
 
       let extraInfo = "";
       if (nomeOfferta.includes("FLEXY SPECIAL")) {
@@ -470,7 +477,7 @@
           <p>Costo Fisso (per il periodo): € ${parseFloat(fixedCost).toFixed(2)}</p>
           <p><strong>Totale Offerta: € ${parseFloat(costoTotale).toFixed(2)}</strong></p>
           <p style="color: ${coloreDifferenza};">
-            <strong>Risparmio: € ${differenza}</strong>
+            <strong>${messaggioDiff}</strong>
           </p>
           <p style="margin-top: 16px; color: #d9534f; font-weight: bold;">
             NOTA: IL PRESENTE CALCOLO È INDICATIVO E SI RIFERISCE ALLE SPESE DI ENERGIA PER IL PERIODO SELEZIONATO. NON TIENE CONTO DI IVA, TASSE, ONERI DI SISTEMA, CANONE RAI, TRASPORTO, GESTIONE CONTATORE E ALTRE VOCI DI STATO.
@@ -500,6 +507,9 @@
       const nomeCliente = document.getElementById("nomeCliente").value.trim();
       const differenza = parseFloat((costoTotale - costoAttualeTotal).toFixed(2));
       const tipoSpesa = nomeOfferta.includes("GAS") ? "Spesa Gas Naturale" : "Spesa Materia Energia";
+      const messaggioDiff = differenza < 0 
+          ? "Risparmio con fornitura ACEA: € " + Math.abs(differenza)
+          : "L'OFFERTA HA UN COSTO SUPERIORE DI: € " + differenza;
 
       let extraInfo = "";
       if (nomeOfferta.includes("FLEXY SPECIAL")) {
@@ -527,12 +537,10 @@ Dettagli Offerta:
 
 Spesa Attuale: € ${parseFloat(costoAttualeTotal).toFixed(2)}
 
-Risparmio/Differenza: € ${differenza}
+${messaggioDiff}
 
 NOTA: 
 Il presente calcolo è indicativo e si riferisce solo alle spese di energia per il periodo selezionato. Non tiene conto di IVA, tasse, oneri di sistema, canone RAI, trasporto, gestione contatore e altre voci di stato.
-
-Per ulteriori dettagli o chiarimenti, non esitare a contattarci!
       `;
       const whatsappLink = `https://wa.me/?text=${encodeURIComponent(messaggio.trim())}`;
       window.open(whatsappLink, "_blank");
