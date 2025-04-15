@@ -136,7 +136,7 @@
       background-color: #25d366;
       color: white;
     }
-    /* Classe aggiornata per evidenziare l'offerta FLEX */
+    /* Classe aggiornata per evidenziare l'offerta FLEX e FIX */
     .nuova-offerta {
       border: 2px dashed #FFA500;
     }
@@ -327,7 +327,7 @@
       
       const consumoLuce = parseFloat(document.getElementById("consumoLuce").value) || 0;
       const consumoGas = parseFloat(document.getElementById("consumoGas").value) || 0;
-      // I valori di spesa attuale sono usati così come inseriti
+      // I valori di spesa attuale vengono usati così come inseriti
       const costoAttualeLuce = parseFloat(document.getElementById("costoAttualeLuce").value) || 0;
       const costoAttualeGas = parseFloat(document.getElementById("costoAttualeGas").value) || 0;
       const tipoCliente = document.getElementById("tipoCliente").value;
@@ -449,6 +449,70 @@
           `;
         }
       }
+      
+      // Implementazione della nuova offerta ACEA FIX per i clienti DOMESTICI
+      if (tipoCliente === "domestico") {
+        // Offerta ACEA FIX per LUCE
+        if (consumoLuce > 0) {
+          // Includiamo il costo di dispacciamento (0,02 €/kWh) sommato al prezzo base (0,16 €/kWh)
+          const costLuce = consumoLuce * (0.16 + 0.02);
+          const fixedLuce = 12 * nMonths;
+          const totalLuce = costLuce + fixedLuce;
+          let diffLuce = totalLuce - costoAttualeLuce;
+          diffLuce = parseFloat(diffLuce.toFixed(2));
+          const messaggioDiff = diffLuce < 0 
+            ? "Risparmio con offerta ACEA FIX: € " + Math.abs(diffLuce)
+            : "L'OFFERTA HA UN COSTO SUPERIORE DI: € " + diffLuce;
+          
+          risultatiOfferte.innerHTML += `
+            <div class="offerta ${diffLuce < 0 ? "risparmio" : "costo"} nuova-offerta">
+              <h3>ACEA FIX LUCE (${selectedMonths.join(", ")})</h3>
+              <p><strong>OFFERTA A PREZZO FISSO</strong></p>
+              <p>Costo Energia Offerta: € ${costLuce.toFixed(2)}</p>
+              <p>Costo Fisso: € 12 al mese (per ${nMonths} mesi = € ${fixedLuce.toFixed(2)})</p>
+              <p><strong>Totale Offerta: € ${totalLuce.toFixed(2)}</strong></p>
+              <p>Spesa Materia Energia Attuale: € ${costoAttualeLuce.toFixed(2)}</p>
+              <p style="color: ${diffLuce < 0 ? "green" : "red"};"><strong>${messaggioDiff}</strong></p>
+              <button type="button" onclick="stampaOfferta('ACEA FIX LUCE', '${selectedMonths.join(", ")}', ${costLuce}, ${fixedLuce}, ${totalLuce}, ${costoAttualeLuce})">
+                Stampa Offerta
+              </button>
+              <button type="button" onclick="inviaWhatsApp('ACEA FIX LUCE', '${selectedMonths.join(", ")}', ${costLuce}, ${fixedLuce}, ${totalLuce}, ${costoAttualeLuce})">
+                Invia su WhatsApp
+              </button>
+            </div>
+          `;
+        }
+        // Offerta ACEA FIX per GAS (rimane invariata)
+        if (consumoGas > 0) {
+          const costGas = consumoGas * 0.575;
+          const fixedGas = 12 * nMonths;
+          const totalGas = costGas + fixedGas;
+          let diffGas = totalGas - costoAttualeGas;
+          diffGas = parseFloat(diffGas.toFixed(2));
+          const messaggioDiff = diffGas < 0 
+            ? "Risparmio con offerta ACEA FIX: € " + Math.abs(diffGas)
+            : "L'OFFERTA HA UN COSTO SUPERIORE DI: € " + diffGas;
+          
+          risultatiOfferte.innerHTML += `
+            <div class="offerta ${diffGas < 0 ? "risparmio" : "costo"} nuova-offerta">
+              <h3>ACEA FIX GAS (${selectedMonths.join(", ")})</h3>
+              <p><strong>OFFERTA A PREZZO FISSO</strong></p>
+              <p>Costo Energia Offerta: € ${costGas.toFixed(2)}</p>
+              <p>Costo Fisso: € 12 al mese (per ${nMonths} mesi = € ${fixedGas.toFixed(2)})</p>
+              <p><strong>Totale Offerta: € ${totalGas.toFixed(2)}</strong></p>
+              <p>Spesa Gas Naturale Attuale: € ${costoAttualeGas.toFixed(2)}</p>
+              <p style="color: ${diffGas < 0 ? "green" : "red"};"><strong>${messaggioDiff}</strong></p>
+              <button type="button" onclick="stampaOfferta('ACEA FIX GAS', '${selectedMonths.join(", ")}', ${costGas}, ${fixedGas}, ${totalGas}, ${costoAttualeGas})">
+                Stampa Offerta
+              </button>
+              <button type="button" onclick="inviaWhatsApp('ACEA FIX GAS', '${selectedMonths.join(", ")}', ${costGas}, ${fixedGas}, ${totalGas}, ${costoAttualeGas})">
+                Invia su WhatsApp
+              </button>
+            </div>
+          `;
+        }
+      }
+      
       document.getElementById("results").style.display = "block";
     }
 
@@ -464,8 +528,8 @@
       let extraInfo = "";
       if (nomeOfferta.includes("SPRINT BUSINESS")) {
         extraInfo = "<p><em>Offerta SPRINT BUSINESS per clienti partita IVA</em></p>";
-      } else if (nomeOfferta.includes("FLEX") && !nomeOfferta.includes("SPRINT BUSINESS")) {
-        extraInfo = "<p><em>Nuova offerta FLEX</em></p>";
+      } else if (nomeOfferta.includes("FLEX") || nomeOfferta.includes("FIX")) {
+        extraInfo = "<p><strong>OFFERTA A PREZZO FISSO</strong></p>";
       }
       
       const printContent = `
@@ -519,8 +583,8 @@
       let extraInfo = "";
       if (nomeOfferta.includes("SPRINT BUSINESS")) {
         extraInfo = "Offerta SPRINT BUSINESS per clienti partita IVA.\n";
-      } else if (nomeOfferta.includes("FLEX") && !nomeOfferta.includes("SPRINT BUSINESS")) {
-        extraInfo = "Nuova offerta FLEX.\n";
+      } else if (nomeOfferta.includes("FLEX") || nomeOfferta.includes("FIX")) {
+        extraInfo = "OFFERTA A PREZZO FISSO.\n";
       }
       
       if (!nomeCliente || nomeCliente === "") {
