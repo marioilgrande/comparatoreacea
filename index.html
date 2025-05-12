@@ -12,7 +12,6 @@
       background-color: #05a8b0;
       color: #333;
     }
-    /* Titolo in bianco */
     h1 {
       text-align: center;
       font-size: 24px;
@@ -51,7 +50,6 @@
       border-radius: 5px;
       box-sizing: border-box;
     }
-    /* Stile personalizzato per i checkbox: aspetto a cerchio */
     input[type="checkbox"] {
       -webkit-appearance: none;
          -moz-appearance: none;
@@ -77,7 +75,6 @@
       background-color: #fff;
       border-radius: 50%;
     }
-    /* Disposizione dei checkbox in griglia a 3 colonne */
     #periodoFatturazione {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -123,20 +120,6 @@
     .offerta.costo {
       background-color: #f8d7da;
     }
-    .btn-group {
-      display: flex;
-      gap: 10px;
-      margin-top: 15px;
-    }
-    .btn-stampa {
-      background-color: #28a745;
-      color: white;
-    }
-    .btn-whatsapp {
-      background-color: #25d366;
-      color: white;
-    }
-    /* Classe aggiornata per evidenziare l'offerta FLEX e FIX */
     .nuova-offerta {
       border: 2px dashed #FFA500;
     }
@@ -184,11 +167,9 @@
           <option value="business">Business</option>
         </select>
       </div>
-      <!-- Aggiornamento dei mesi: Giugno 2024 è rimosso, e viene aggiunto Marzo 2025 -->
       <div class="form-group">
         <label>PERIODO DI FATTURAZIONE</label>
         <div id="periodoFatturazione">
-          <label><input type="checkbox" name="periodoFatturazione" value="luglio"> Luglio 2024</label>
           <label><input type="checkbox" name="periodoFatturazione" value="agosto"> Agosto 2024</label>
           <label><input type="checkbox" name="periodoFatturazione" value="settembre"> Settembre 2024</label>
           <label><input type="checkbox" name="periodoFatturazione" value="ottobre"> Ottobre 2024</label>
@@ -197,6 +178,7 @@
           <label><input type="checkbox" name="periodoFatturazione" value="gennaio"> Gennaio 2025</label>
           <label><input type="checkbox" name="periodoFatturazione" value="febbraio"> Febbraio 2025</label>
           <label><input type="checkbox" name="periodoFatturazione" value="marzo"> Marzo 2025</label>
+          <label><input type="checkbox" name="periodoFatturazione" value="aprile"> Aprile 2025</label>
         </div>
       </div>
       <div class="form-group">
@@ -204,7 +186,7 @@
         <input type="number" id="consumoLuce" placeholder="Inserisci il consumo in kWh">
       </div>
       <div class="form-group">
-        <label for="costoAttualeLuce">Spesa attuale per luce (Spesa Materia Energia Attuale)</label>
+        <label for="costoAttualeLuce">Spesa attuale per luce</label>
         <input type="number" id="costoAttualeLuce" placeholder="Inserisci spesa attuale per luce">
       </div>
       <div class="form-group">
@@ -212,7 +194,7 @@
         <input type="number" id="consumoGas" placeholder="Inserisci il consumo in mc">
       </div>
       <div class="form-group">
-        <label for="costoAttualeGas">Spesa attuale per gas (Spesa Gas Naturale Attuale)</label>
+        <label for="costoAttualeGas">Spesa attuale per gas</label>
         <input type="number" id="costoAttualeGas" placeholder="Inserisci spesa attuale per gas">
       </div>
       <button type="button" onclick="calcolaCosto()">Calcola</button>
@@ -222,33 +204,9 @@
       <div id="risultatiOfferte"></div>
     </div>
   </div>
+
   <script>
-    /* Aggiornamento offerte:
-       - SPRINT LUCE e SPRINT GAS (ex START):
-         • SPRINT LUCE: { pun, spreadLuce: 0.016, costoFisso: 10 }
-         • SPRINT GAS: { psv, spread: 0.060, costoFisso: 10 }
-       
-       - SPRINT BUSINESS LUCE e SPRINT BUSINESS GAS (ex FLEXY SPECIAL):
-         • SPRINT BUSINESS LUCE: { pun, spreadLuce: 0.020, costoFisso: 13 }
-         • SPRINT BUSINESS GAS: { psv, spread: 0.065, costoFisso: 13 }
-       
-       - ACEA FLEX:
-         • ACEA FLEX LUCE: { pun, spreadLuce: 0.032, costoFisso: 8.90 }
-         • ACEA FLEX GAS: { psv, spread: 0.132, costoFisso: 8.90 }
-       
-       Per il mese di Marzo 2025:
-         • pun = 0.120
-         • psv = 0.455
-    */
     const offertePerMese = {
-      luglio: {
-        "SPRINT LUCE": { pun: 0.11232, spreadLuce: 0.016, costoFisso: 10 },
-        "SPRINT GAS": { psv: 0.37504, spread: 0.060, costoFisso: 10 },
-        "SPRINT BUSINESS LUCE": { pun: 0.11232, spreadLuce: 0.020, costoFisso: 13 },
-        "SPRINT BUSINESS GAS": { psv: 0.37504, spread: 0.065, costoFisso: 13 },
-        "ACEA FLEX LUCE": { pun: 0.11232, spreadLuce: 0.032, costoFisso: 8.90 },
-        "ACEA FLEX GAS": { psv: 0.37504, spread: 0.132, costoFisso: 8.90 }
-      },
       agosto: {
         "SPRINT LUCE": { pun: 0.12844, spreadLuce: 0.016, costoFisso: 10 },
         "SPRINT GAS": { psv: 0.42952, spread: 0.060, costoFisso: 10 },
@@ -299,19 +257,27 @@
       },
       febbraio: {
         "SPRINT LUCE": { pun: 0.15037, spreadLuce: 0.016, costoFisso: 10 },
-        "SPRINT GAS": { psv: 0.5662, spread: 0.060, costoFisso: 10 },
+        "SPRINT GAS": { psv: 0.56620, spread: 0.060, costoFisso: 10 },
         "SPRINT BUSINESS LUCE": { pun: 0.15037, spreadLuce: 0.020, costoFisso: 13 },
-        "SPRINT BUSINESS GAS": { psv: 0.5662, spread: 0.065, costoFisso: 13 },
+        "SPRINT BUSINESS GAS": { psv: 0.56620, spread: 0.065, costoFisso: 13 },
         "ACEA FLEX LUCE": { pun: 0.15037, spreadLuce: 0.032, costoFisso: 8.90 },
-        "ACEA FLEX GAS": { psv: 0.5662, spread: 0.132, costoFisso: 8.90 }
+        "ACEA FLEX GAS": { psv: 0.56620, spread: 0.132, costoFisso: 8.90 }
       },
       marzo: {
-        "SPRINT LUCE": { pun: 0.120, spreadLuce: 0.016, costoFisso: 10 },
-        "SPRINT GAS": { psv: 0.455, spread: 0.060, costoFisso: 10 },
-        "SPRINT BUSINESS LUCE": { pun: 0.120, spreadLuce: 0.020, costoFisso: 13 },
-        "SPRINT BUSINESS GAS": { psv: 0.455, spread: 0.065, costoFisso: 13 },
-        "ACEA FLEX LUCE": { pun: 0.120, spreadLuce: 0.032, costoFisso: 8.90 },
-        "ACEA FLEX GAS": { psv: 0.455, spread: 0.132, costoFisso: 8.90 }
+        "SPRINT LUCE": { pun: 0.12000, spreadLuce: 0.016, costoFisso: 10 },
+        "SPRINT GAS": { psv: 0.45500, spread: 0.060, costoFisso: 10 },
+        "SPRINT BUSINESS LUCE": { pun: 0.12000, spreadLuce: 0.020, costoFisso: 13 },
+        "SPRINT BUSINESS GAS": { psv: 0.45500, spread: 0.065, costoFisso: 13 },
+        "ACEA FLEX LUCE": { pun: 0.12000, spreadLuce: 0.032, costoFisso: 8.90 },
+        "ACEA FLEX GAS": { psv: 0.45500, spread: 0.132, costoFisso: 8.90 }
+      },
+      aprile: {
+        "SPRINT LUCE": { pun: 0.09980, spreadLuce: 0.016, costoFisso: 10 },
+        "SPRINT GAS": { psv: 0.40240, spread: 0.060, costoFisso: 10 },
+        "SPRINT BUSINESS LUCE": { pun: 0.09980, spreadLuce: 0.020, costoFisso: 13 },
+        "SPRINT BUSINESS GAS": { psv: 0.40240, spread: 0.065, costoFisso: 13 },
+        "ACEA FLEX LUCE": { pun: 0.09980, spreadLuce: 0.032, costoFisso: 8.90 },
+        "ACEA FLEX GAS": { psv: 0.40240, spread: 0.132, costoFisso: 8.90 }
       }
     };
 
@@ -617,3 +583,4 @@ Il presente calcolo è indicativo e si riferisce solo alle spese di energia per 
   </script>
 </body>
 </html>
+
