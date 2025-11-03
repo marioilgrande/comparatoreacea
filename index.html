@@ -95,6 +95,25 @@
       border-radius: 5px;
       font-weight: bold;
     }
+  
+  /* Evidenziazione risultati dopo il calcolo */
+  .results {
+    position: relative;
+    transition: box-shadow .4s ease, transform .4s ease;
+    scroll-margin-top: 16px; /* evita che resti sotto l'header su scroll */
+  }
+  .results.spotlight {
+    box-shadow: 0 12px 30px rgba(0,0,0,.25);
+    transform: translateY(-2px);
+  }
+  @keyframes flashBorder {
+    0%   { outline: 0 }
+    20%  { outline: 3px solid #0ABAB5 }
+    100% { outline: 0 }
+  }
+  .results.flash {
+    animation: flashBorder 1400ms ease-out 1;
+  }
     .banner-warning { background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
     .banner-error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
   </style>
@@ -116,17 +135,6 @@
       </p>
     </div>
 
-    <div id="bannerScontrino" class="banner banner-warning">
-      Da luglio 2025 arriva la bolletta scontrino. Inserisci i dati come riportato nell'esempio, cioè la quota consumi e la quota fissa (di cui spesa per la vendita di Energia/Gas). Tutto il resto sono tasse e spese non imputabili al fornitore.
-    </div>
-    <div id="bannerErrore" class="banner banner-error"></div>
-
-<div id="fotoScontrino" style="display:none; text-align:center; margin-bottom:15px;">
-  <img id="imgScontrino" 
-       src="" 
-       alt="Esempio Bolletta Scontrino" 
-       style="max-width:100%; border-radius:10px; box-shadow:0 2px 6px rgba(0,0,0,0.3);">
-</div>
 
     <form id="calcolatore">
       <div class="form-group">
@@ -150,6 +158,20 @@
           <label><input type="checkbox" name="periodoFatturazione" value="settembre"> Settembre 2025</label>
           <label><input type="checkbox" name="periodoFatturazione" value="ottobre"> Ottobre 2025</label>
         </div>
+
+        <div id="bannerScontrino" class="banner banner-warning">
+          Da luglio 2025 arriva la bolletta scontrino. Inserisci i dati come riportato nell'esempio, cioè la quota consumi e la quota fissa (di cui spesa per la vendita di Energia/Gas). Tutto il resto sono tasse e spese non imputabili al fornitore.
+        </div>
+        <div id="bannerErrore" class="banner banner-error"></div>
+        
+              <!-- FOTO SCONTRINO - spostata sotto PERIODO DI FATTURAZIONE -->
+      <div id="fotoScontrino" style="display:none; text-align:center; margin:10px 0 15px;">
+        <img id="imgScontrino"
+             src=""
+             alt="Esempio Bolletta Scontrino"
+             style="max-width:100%; border-radius:10px; box-shadow:0 2px 6px rgba(0,0,0,0.3);">
+      </div>
+
       </div>
 
       <!-- Campi standard fino a Giugno 2025 -->
@@ -305,6 +327,20 @@ const haDaLuglio = mesi.some(m => ["giugno","luglio","agosto","settembre"].inclu
     document.querySelectorAll('input[name="periodoFatturazione"]').forEach(cb => {
       cb.addEventListener("change", aggiornaCampiForm);
     });
+
+
+  function spotlightResults() {
+    const results = document.getElementById("results");
+    // assicurati che sia visibile
+    results.style.display = "block";
+    // usa rAF per aspettare il reflow, poi applica l'effetto e scrolla
+    requestAnimationFrame(() => {
+      results.classList.add("spotlight", "flash");
+      results.scrollIntoView({ behavior: "smooth", block: "start" });
+      // rimuovi l’effetto dopo un attimo
+      setTimeout(() => results.classList.remove("flash", "spotlight"), 1600);
+    });
+  }
 
      function calcolaCosto() {
       const checkboxes = document.querySelectorAll('input[name="periodoFatturazione"]:checked');
@@ -515,7 +551,7 @@ const haDaLuglio = selectedMonths.some(m => ["giugno","luglio","agosto","settemb
       }
 
 
-      document.getElementById("results").style.display = "block";
+      spotlightResults();
     }
 
      function stampaOfferta(nomeOfferta, periodo, energyCost, fixedCost, costoTotale, costoAttualeTotal) {
@@ -619,6 +655,3 @@ Il presente calcolo è indicativo e si riferisce solo alle spese di energia per 
   </script>
 </body>
 </html>
-
-
-
