@@ -143,12 +143,12 @@
       <div class="form-group">
         <label>PERIODO DI FATTURAZIONE</label>
         <div id="periodoFatturazione">
-          <label><input type="checkbox" name="periodoFatturazione" value="aprile"> Aprile 2025</label>
           <label><input type="checkbox" name="periodoFatturazione" value="maggio"> Maggio 2025</label>
           <label><input type="checkbox" name="periodoFatturazione" value="giugno"> Giugno 2025</label>
           <label><input type="checkbox" name="periodoFatturazione" value="luglio"> Luglio 2025</label>
           <label><input type="checkbox" name="periodoFatturazione" value="agosto"> Agosto 2025</label>
           <label><input type="checkbox" name="periodoFatturazione" value="settembre"> Settembre 2025</label>
+          <label><input type="checkbox" name="periodoFatturazione" value="ottobre"> Ottobre 2025</label>
         </div>
       </div>
 
@@ -210,14 +210,6 @@
 
   <script>
     const offertePerMese = {
-      aprile: {
-        "SPRINT LUCE": { pun: 0.09980, spreadLuce: 0.016, costoFisso: 10 },
-        "SPRINT GAS": { psv: 0.40240, spread: 0.060, costoFisso: 10 },
-        "SPRINT BUSINESS LUCE": { pun: 0.09980, spreadLuce: 0.02, costoFisso: 13 },
-        "SPRINT BUSINESS GAS": { psv: 0.40240, spread: 0.0650, costoFisso: 13 },
-        "ACEA FLEX LUCE": { pun: 0.09980, spreadLuce: 0.031, costoFisso: 9 },
-        "ACEA FLEX GAS": { psv: 0.40240, spread: 0.131, costoFisso: 9 }
-      },
       maggio: {
         "SPRINT LUCE": { pun: 0.09358, spreadLuce: 0.016, costoFisso: 10 },
         "SPRINT GAS": { psv: 0.4031,  spread: 0.060, costoFisso: 10 },
@@ -257,6 +249,14 @@
         "SPRINT BUSINESS GAS": { psv: 0.3734, spread: 0.0650, costoFisso: 13 },
         "ACEA FLEX LUCE": { pun: 0.10908, spreadLuce: 0.031, costoFisso: 9 },
         "ACEA FLEX GAS": { psv: 0.3734, spread: 0.131, costoFisso: 9 }
+      },
+      ottobre: {
+        "SPRINT LUCE": { pun: 0.111, spreadLuce: 0.016, costoFisso: 10 },
+        "SPRINT GAS": { psv: 0.325, spread: 0.060, costoFisso: 10 },
+        "SPRINT BUSINESS LUCE": { pun: 0.111, spreadLuce: 0.02, costoFisso: 13 },
+        "SPRINT BUSINESS GAS": { psv: 0.325, spread: 0.0650, costoFisso: 13 },
+        "ACEA FLEX LUCE": { pun: 0.111, spreadLuce: 0.031, costoFisso: 9 },
+        "ACEA FLEX GAS": { psv: 0.325, spread: 0.131, costoFisso: 9 }
       },
     };
 
