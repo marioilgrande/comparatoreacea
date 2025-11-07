@@ -163,7 +163,7 @@
           Da luglio 2025 arriva la bolletta scontrino. Inserisci i dati come riportato nell'esempio, cioè la quota consumi e la quota fissa (di cui spesa per la vendita di Energia/Gas). Tutto il resto sono tasse e spese non imputabili al fornitore.
         </div>
         <div id="bannerErrore" class="banner banner-error"></div>
-        
+
               <!-- FOTO SCONTRINO - spostata sotto PERIODO DI FATTURAZIONE -->
       <div id="fotoScontrino" style="display:none; text-align:center; margin:10px 0 15px;">
         <img id="imgScontrino"
@@ -323,11 +323,9 @@ const haDaLuglio = mesi.some(m => ["giugno","luglio","agosto","settembre"].inclu
   }
 }
 
-
     document.querySelectorAll('input[name="periodoFatturazione"]').forEach(cb => {
       cb.addEventListener("change", aggiornaCampiForm);
     });
-
 
   function spotlightResults() {
     const results = document.getElementById("results");
@@ -354,8 +352,6 @@ const haDaLuglio = mesi.some(m => ["giugno","luglio","agosto","settembre"].inclu
       const haPreLuglio = selectedMonths.some(m => ["novembre","dicembre","gennaio","febbraio","marzo","aprile","maggio"].includes(m));
 const haDaLuglio = selectedMonths.some(m => ["giugno","luglio","agosto","settembre"].includes(m));
 
-
-     
       const nMonths = selectedMonths.length;
       const tipoCliente = document.getElementById("tipoCliente").value;
       const risultatiOfferte = document.getElementById("risultatiOfferte");
@@ -487,12 +483,12 @@ const haDaLuglio = selectedMonths.some(m => ["giugno","luglio","agosto","settemb
         }
       }
 
-// Implementazione della nuova offerta ACEA FIX per i clienti DOMESTICI
+// Implementazione della nuova offerta ACEA FIX per i clienti DOMESTICI - DA USARE PER MODIFICARE LA FIX
       if (tipoCliente === "domestico") {
         // Offerta ACEA FIX per LUCE
         if (consumoLuce > 0) {
           // Includiamo il costo di dispacciamento (0,02 €/kWh) sommato al prezzo base (0,121 €/kWh)
-          const costLuce = consumoLuce * (0.123 + 0.02);
+          const costLuce = consumoLuce * (0.121 + 0.02);
           const fixedLuce = 12 * nMonths;
           const totalLuce = costLuce + fixedLuce;
           let diffLuce = totalLuce - costoAttualeLuce;
@@ -521,7 +517,7 @@ const haDaLuglio = selectedMonths.some(m => ["giugno","luglio","agosto","settemb
         }
         // Offerta ACEA FIX per GAS (rimane invariata)
         if (consumoGas > 0) {
-          const costGas = consumoGas * 0.41;
+          const costGas = consumoGas * 0.39;
           const fixedGas = 12 * nMonths;
           const totalGas = costGas + fixedGas;
           let diffGas = totalGas - costoAttualeGas;
@@ -549,7 +545,6 @@ const haDaLuglio = selectedMonths.some(m => ["giugno","luglio","agosto","settemb
           `;
         }
       }
-
 
       spotlightResults();
     }
