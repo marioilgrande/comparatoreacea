@@ -151,12 +151,12 @@
       <div class="form-group">
         <label>PERIODO DI FATTURAZIONE</label>
         <div id="periodoFatturazione">
-          <label><input type="checkbox" name="periodoFatturazione" value="maggio"> Maggio 2025</label>
           <label><input type="checkbox" name="periodoFatturazione" value="giugno"> Giugno 2025</label>
           <label><input type="checkbox" name="periodoFatturazione" value="luglio"> Luglio 2025</label>
           <label><input type="checkbox" name="periodoFatturazione" value="agosto"> Agosto 2025</label>
           <label><input type="checkbox" name="periodoFatturazione" value="settembre"> Settembre 2025</label>
           <label><input type="checkbox" name="periodoFatturazione" value="ottobre"> Ottobre 2025</label>
+          <label><input type="checkbox" name="periodoFatturazione" value="novembre"> Novembre 2025</label>
         </div>
 
         <div id="bannerScontrino" class="banner banner-warning">
@@ -232,14 +232,6 @@
 
   <script>
     const offertePerMese = {
-      maggio: {
-        "SPRINT LUCE": { pun: 0.09358, spreadLuce: 0.016, costoFisso: 10 },
-        "SPRINT GAS": { psv: 0.4031,  spread: 0.060, costoFisso: 10 },
-        "SPRINT BUSINESS LUCE":{ pun: 0.09358, spreadLuce: 0.02, costoFisso: 13 },
-        "SPRINT BUSINESS GAS": { psv: 0.4031,  spread: 0.0650, costoFisso: 13 },
-        "ACEA FLEX LUCE": { pun: 0.09358, spreadLuce: 0.031, costoFisso: 9 },
-        "ACEA FLEX GAS": { psv: 0.4031,  spread: 0.131, costoFisso: 9 }
-      },
       giugno: {
         "SPRINT LUCE": { pun: 0.11178, spreadLuce: 0.016, costoFisso: 10 },
         "SPRINT GAS": { psv: 0.39971, spread: 0.060, costoFisso: 10 },
@@ -280,6 +272,14 @@
         "ACEA FLEX LUCE": { pun: 0.111, spreadLuce: 0.031, costoFisso: 9 },
         "ACEA FLEX GAS": { psv: 0.325, spread: 0.131, costoFisso: 9 }
       },
+      novembre: {
+        "SPRINT LUCE": { pun: 0.117, spreadLuce: 0.016, costoFisso: 10 },
+        "SPRINT GAS": { psv: 0.323,  spread: 0.060, costoFisso: 10 },
+        "SPRINT BUSINESS LUCE":{ pun: 0.117, spreadLuce: 0.02, costoFisso: 13 },
+        "SPRINT BUSINESS GAS": { psv: 0.323,  spread: 0.0650, costoFisso: 13 },
+        "ACEA FLEX LUCE": { pun: 0.117, spreadLuce: 0.031, costoFisso: 9 },
+        "ACEA FLEX GAS": { psv: 0.323,  spread: 0.131, costoFisso: 9 }
+      },
     };
 
     // Mostra/nasconde campi in base ai mesi
@@ -307,7 +307,7 @@
   }
 
   const haPreLuglio = mesi.some(m => ["febbraio","marzo","aprile","maggio"].includes(m));
-const haDaLuglio = mesi.some(m => ["giugno","luglio","agosto","settembre","ottobre"].includes(m));
+const haDaLuglio = mesi.some(m => ["giugno","luglio","agosto","settembre","ottobre","novembre"].includes(m));
 
 
   if (haDaLuglio) {
@@ -350,7 +350,7 @@ const haDaLuglio = mesi.some(m => ["giugno","luglio","agosto","settembre","ottob
       }
 
       const haPreLuglio = selectedMonths.some(m => ["novembre","dicembre","gennaio","febbraio","marzo","aprile","maggio"].includes(m));
-const haDaLuglio = selectedMonths.some(m => ["giugno","luglio","agosto","settembre","ottobre"].includes(m));
+const haDaLuglio = selectedMonths.some(m => ["giugno","luglio","agosto","settembre","ottobre","novembre"].includes(m));
 
       const nMonths = selectedMonths.length;
       const tipoCliente = document.getElementById("tipoCliente").value;
