@@ -571,7 +571,7 @@
       if (tipoCliente === "domestico") {
         // FIX LUCE
         if (consumoLuce > 0) {
-          const costLuce  = consumoLuce * (0.119 + 0.02);
+          const costLuce  = consumoLuce * (0.159 + 0.02);
           const fixedLuce = 12 * nMonths;
           const totalLuce = costLuce + fixedLuce;
 
@@ -596,7 +596,7 @@
 
         // FIX GAS
         if (consumoGas > 0) {
-          const costGas  = consumoGas * 0.35;
+          const costGas  = consumoGas * 0.59;
           const fixedGas = 12 * nMonths;
           const totalGas = costGas + fixedGas;
 
