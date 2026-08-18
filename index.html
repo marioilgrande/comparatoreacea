@@ -79,17 +79,17 @@
       width: 12px; height: 12px; background-color: #fff; border-radius: 50%;
     }
 
-    #periodoFatturazione {
+    .periodo-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 10px;
     }
-    #periodoFatturazione label {
+    .periodo-grid label {
       display: flex; align-items: center; gap: 5px; font-weight: normal;
       position: relative;
       cursor: help;
     }
-    #periodoFatturazione label[data-pun]:hover::after {
+    .periodo-grid label[data-pun]:hover::after {
       content: "PUN: " attr(data-pun) " €/kWh\A PSV: " attr(data-psv) " €/Smc";
       white-space: pre;
       position: absolute;
@@ -108,7 +108,7 @@
       pointer-events: none;
       z-index: 100;
     }
-    #periodoFatturazione label[data-pun]:hover::before {
+    .periodo-grid label[data-pun]:hover::before {
       content: "";
       position: absolute;
       bottom: calc(100% + 2px);
@@ -119,6 +119,90 @@
       pointer-events: none;
       z-index: 100;
     }
+
+    /* Toggle "Periodi diversi per Luce e Gas" */
+    .toggle-switch {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      user-select: none;
+      padding: 12px 14px;
+      background: #f8f9fa;
+      border-radius: 10px;
+      border: 1px solid #e0e0e0;
+      font-weight: 600;
+      font-size: 14px;
+      color: #333;
+    }
+    .toggle-switch input[type="checkbox"] {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+      pointer-events: none;
+    }
+    .toggle-track {
+      width: 44px;
+      height: 24px;
+      background: #ccc;
+      border-radius: 999px;
+      position: relative;
+      transition: background .2s;
+      flex-shrink: 0;
+    }
+    .toggle-thumb {
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 20px;
+      height: 20px;
+      background: #fff;
+      border-radius: 50%;
+      transition: transform .2s;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+    }
+    .toggle-switch input:checked ~ .toggle-track {
+      background: #0ABAB5;
+    }
+    .toggle-switch input:checked ~ .toggle-track .toggle-thumb {
+      transform: translateX(20px);
+    }
+
+    .periodo-label-luce, .periodo-label-gas {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 4px;
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+    .periodo-label-luce { background:#fff3e0; color:#e65100; }
+    .periodo-label-gas { background:#e3f2fd; color:#0277bd; }
+
+    /* Banner risultati: periodi differenziati */
+    .info-periodi-diversi {
+      background: #fff8e1;
+      border: 1px solid #ffc107;
+      border-left: 5px solid #ff9800;
+      border-radius: 8px;
+      padding: 14px 16px;
+      margin-bottom: 18px;
+      color: #5d4037;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+    .info-periodi-diversi .titolo {
+      display: block;
+      font-weight: 800;
+      font-size: 14px;
+      margin-bottom: 6px;
+      color: #e65100;
+      letter-spacing: .3px;
+    }
+    .info-periodi-diversi .riga { display: block; }
+    .info-periodi-diversi .riga strong { color: #333; }
 
     button {
       width: 100%;
@@ -625,14 +709,34 @@
       </div>
 
       <div class="form-group">
-        <label>PERIODO DI FATTURAZIONE</label>
-        <div id="periodoFatturazione">
-          <label><input type="checkbox" name="periodoFatturazione" value="novembre"> Novembre 2025</label>
-          <label><input type="checkbox" name="periodoFatturazione" value="dicembre"> Dicembre 2025</label>
-          <label><input type="checkbox" name="periodoFatturazione" value="gennaio"> Gennaio 2026</label>
-          <label><input type="checkbox" name="periodoFatturazione" value="febbraio"> Febbraio 2026</label>
-          <label><input type="checkbox" name="periodoFatturazione" value="marzo"> Marzo 2026</label>
-          <label><input type="checkbox" name="periodoFatturazione" value="aprile"> Aprile 2026</label>
+        <label class="toggle-switch" for="periodiDiversi">
+          <input type="checkbox" id="periodiDiversi" onchange="togglePeriodiDiversi()">
+          <span class="toggle-track"><span class="toggle-thumb"></span></span>
+          <span>Imposta periodi diversi per Luce e Gas</span>
+        </label>
+      </div>
+
+      <div class="form-group" id="periodoLuceContainer">
+        <label id="periodoLuceLabel">PERIODO DI FATTURAZIONE</label>
+        <div id="periodoFatturazioneLuce" class="periodo-grid">
+          <label><input type="checkbox" name="periodoFatturazioneLuce" value="febbraio"> Febbraio 2026</label>
+          <label><input type="checkbox" name="periodoFatturazioneLuce" value="marzo"> Marzo 2026</label>
+          <label><input type="checkbox" name="periodoFatturazioneLuce" value="aprile"> Aprile 2026</label>
+          <label><input type="checkbox" name="periodoFatturazioneLuce" value="maggio"> Maggio 2026</label>
+          <label><input type="checkbox" name="periodoFatturazioneLuce" value="giugno"> Giugno 2026</label>
+          <label><input type="checkbox" name="periodoFatturazioneLuce" value="luglio"> Luglio 2026</label>
+        </div>
+      </div>
+
+      <div class="form-group" id="periodoGasContainer" style="display:none;">
+        <label>PERIODO DI FATTURAZIONE <span class="periodo-label-gas">GAS</span></label>
+        <div id="periodoFatturazioneGas" class="periodo-grid">
+          <label><input type="checkbox" name="periodoFatturazioneGas" value="febbraio"> Febbraio 2026</label>
+          <label><input type="checkbox" name="periodoFatturazioneGas" value="marzo"> Marzo 2026</label>
+          <label><input type="checkbox" name="periodoFatturazioneGas" value="aprile"> Aprile 2026</label>
+          <label><input type="checkbox" name="periodoFatturazioneGas" value="maggio"> Maggio 2026</label>
+          <label><input type="checkbox" name="periodoFatturazioneGas" value="giugno"> Giugno 2026</label>
+          <label><input type="checkbox" name="periodoFatturazioneGas" value="luglio"> Luglio 2026</label>
         </div>
       </div>
 
@@ -683,7 +787,7 @@
         <button type="button" class="modal-close" onclick="chiudiGuida()">Chiudi</button>
       </div>
       <div class="modal-body">
-        <img id="guidaImg" src="assets/guida-bolletta.jpg" alt="Guida lettura bolletta scontrino" />
+        <img id="guidaImg" src="assets/guida-bolletta.jpeg" alt="Guida lettura bolletta scontrino" />
       </div>
     </div>
   </div>
@@ -698,8 +802,11 @@
       <div class="modal-body">
         <div class="slideshow">
           <div class="slideshow-images">
-            <img class="slide active" src="assets/offerte-in-corso.jpeg" alt="Offerte Luce e Gas in corso" />
-            <img class="slide" src="assets/acea-fix-dettaglio.png" alt="Nuova ACEA FIX - dettaglio offerta" />
+            <img class="slide active" src="assets/offerte-in-corso.png" alt="Offerte Luce e Gas in corso" />
+            <img class="slide" src="assets/offerta-fix.png" alt="Offerta ACEA FIX" />
+            <img class="slide" src="assets/offerta-sprint-domestico.png" alt="Offerta SPRINT Domestico" />
+            <img class="slide" src="assets/offerta-sprint-business.png" alt="Offerta SPRINT Business" />
+            <img class="slide" src="assets/offerta-flex.png" alt="Offerta ACEA FLEX" />
           </div>
           <button type="button" class="slide-nav slide-prev" onclick="cambiaSlide(-1)" aria-label="Precedente">‹</button>
           <button type="button" class="slide-nav slide-next" onclick="cambiaSlide(1)" aria-label="Successiva">›</button>
@@ -708,66 +815,69 @@
           <div class="slide-dots">
             <span class="dot active" onclick="vaiSlide(0)" aria-label="Slide 1"></span>
             <span class="dot" onclick="vaiSlide(1)" aria-label="Slide 2"></span>
+            <span class="dot" onclick="vaiSlide(2)" aria-label="Slide 3"></span>
+            <span class="dot" onclick="vaiSlide(3)" aria-label="Slide 4"></span>
+            <span class="dot" onclick="vaiSlide(4)" aria-label="Slide 5"></span>
           </div>
-          <div class="slide-counter"><span id="slideTitle">Offerte Luce e Gas</span> &nbsp;·&nbsp; <span id="slideCounter">1 / 2</span></div>
+          <div class="slide-counter"><span id="slideTitle">Offerte Luce e Gas</span> &nbsp;·&nbsp; <span id="slideCounter">1 / 5</span></div>
         </div>
-        <a id="downloadCurrent" href="assets/offerte-in-corso.jpeg" download="offerte-acea-energia.jpeg" class="btn-download">⬇ Scarica questa immagine</a>
+        <a id="downloadCurrent" href="assets/offerte-in-corso.png" download="offerte-acea-energia.png" class="btn-download">⬇ Scarica questa immagine</a>
       </div>
     </div>
   </div>
 
   <script>
-    /* L'immagine guida è caricata da assets/guida-bolletta.jpg
+    /* L'immagine guida è caricata da assets/guida-bolletta.jpeg
        (sostituibile cambiando solo quel file)                  */
 
     const offertePerMese = {
-      novembre: {
-        "SPRINT LUCE": { pun: 0.117, spreadLuce: 0.0145, costoFisso: 10 },
-        "SPRINT GAS": { psv: 0.3488, spread: 0.053, costoFisso: 10 },
-        "SPRINT BUSINESS LUCE": { pun: 0.117, spreadLuce: 0.016, costoFisso: 13 },
-        "SPRINT BUSINESS GAS": { psv: 0.3488, spread: 0.056, costoFisso: 13 },
-        "ACEA FLEX LUCE": { pun: 0.117, spreadLuce: 0.03, costoFisso: 9 },
-        "ACEA FLEX GAS": { psv: 0.3488, spread: 0.122, costoFisso: 9 }
-      },
-      dicembre: {
-        "SPRINT LUCE": { pun: 0.115, spreadLuce: 0.0145, costoFisso: 10 },
-        "SPRINT GAS": { psv: 0.328, spread: 0.053, costoFisso: 10 },
-        "SPRINT BUSINESS LUCE": { pun: 0.115, spreadLuce: 0.016, costoFisso: 13 },
-        "SPRINT BUSINESS GAS": { psv: 0.328, spread: 0.056, costoFisso: 13 },
-        "ACEA FLEX LUCE": { pun: 0.115, spreadLuce: 0.03, costoFisso: 9 },
-        "ACEA FLEX GAS": { psv: 0.328, spread: 0.122, costoFisso: 9 }
-      },
-      gennaio: {
-        "SPRINT LUCE": { pun: 0.133, spreadLuce: 0.0145, costoFisso: 10 },
-        "SPRINT GAS": { psv: 0.404, spread: 0.053, costoFisso: 10 },
-        "SPRINT BUSINESS LUCE": { pun: 0.133, spreadLuce: 0.016, costoFisso: 13 },
-        "SPRINT BUSINESS GAS": { psv: 0.404, spread: 0.056, costoFisso: 13 },
-        "ACEA FLEX LUCE": { pun: 0.133, spreadLuce: 0.03, costoFisso: 9 },
-        "ACEA FLEX GAS": { psv: 0.404, spread: 0.122, costoFisso: 9 }
-      },
       febbraio: {
         "SPRINT LUCE": { pun: 0.1144, spreadLuce: 0.0145, costoFisso: 10 },
-        "SPRINT GAS": { psv: 0.3768, spread: 0.053, costoFisso: 10 },
+        "SPRINT GAS": { psv: 0.3768, spread: 0.075, costoFisso: 10 },
         "SPRINT BUSINESS LUCE": { pun: 0.1144, spreadLuce: 0.016, costoFisso: 13 },
-        "SPRINT BUSINESS GAS": { psv: 0.3768, spread: 0.056, costoFisso: 13 },
+        "SPRINT BUSINESS GAS": { psv: 0.3768, spread: 0.081, costoFisso: 13 },
         "ACEA FLEX LUCE": { pun: 0.1144, spreadLuce: 0.03, costoFisso: 9 },
-        "ACEA FLEX GAS": { psv: 0.3768, spread: 0.122, costoFisso: 9 }
+        "ACEA FLEX GAS": { psv: 0.3768, spread: 0.148, costoFisso: 9 }
       },
       marzo: {
         "SPRINT LUCE": { pun: 0.1434, spreadLuce: 0.0145, costoFisso: 10 },
-        "SPRINT GAS": { psv: 0.55833, spread: 0.053, costoFisso: 10 },
+        "SPRINT GAS": { psv: 0.55833, spread: 0.075, costoFisso: 10 },
         "SPRINT BUSINESS LUCE": { pun: 0.1434, spreadLuce: 0.016, costoFisso: 13 },
-        "SPRINT BUSINESS GAS": { psv: 0.55833, spread: 0.056, costoFisso: 13 },
+        "SPRINT BUSINESS GAS": { psv: 0.55833, spread: 0.081, costoFisso: 13 },
         "ACEA FLEX LUCE": { pun: 0.1434, spreadLuce: 0.03, costoFisso: 9 },
-        "ACEA FLEX GAS": { psv: 0.55833, spread: 0.122, costoFisso: 9 }
+        "ACEA FLEX GAS": { psv: 0.55833, spread: 0.148, costoFisso: 9 }
       },
       aprile: {
         "SPRINT LUCE": { pun: 0.1195, spreadLuce: 0.0145, costoFisso: 10 },
-        "SPRINT GAS": { psv: 0.49312, spread: 0.053, costoFisso: 10 },
+        "SPRINT GAS": { psv: 0.49312, spread: 0.075, costoFisso: 10 },
         "SPRINT BUSINESS LUCE": { pun: 0.1195, spreadLuce: 0.016, costoFisso: 13 },
-        "SPRINT BUSINESS GAS": { psv: 0.49312, spread: 0.056, costoFisso: 13 },
+        "SPRINT BUSINESS GAS": { psv: 0.49312, spread: 0.081, costoFisso: 13 },
         "ACEA FLEX LUCE": { pun: 0.1195, spreadLuce: 0.03, costoFisso: 9 },
-        "ACEA FLEX GAS": { psv: 0.49312, spread: 0.122, costoFisso: 9 }
+        "ACEA FLEX GAS": { psv: 0.49312, spread: 0.148, costoFisso: 9 }
+      },
+      maggio: {
+        "SPRINT LUCE": { pun: 0.1193, spreadLuce: 0.0145, costoFisso: 10 },
+        "SPRINT GAS": { psv: 0.5024, spread: 0.075, costoFisso: 10 },
+        "SPRINT BUSINESS LUCE": { pun: 0.1193, spreadLuce: 0.016, costoFisso: 13 },
+        "SPRINT BUSINESS GAS": { psv: 0.5024, spread: 0.081, costoFisso: 13 },
+        "ACEA FLEX LUCE": { pun: 0.1193, spreadLuce: 0.03, costoFisso: 9 },
+        "ACEA FLEX GAS": { psv: 0.5024, spread: 0.148, costoFisso: 9 }
+      },
+      giugno: {
+        "SPRINT LUCE": { pun: 0.1257, spreadLuce: 0.0145, costoFisso: 10 },
+        "SPRINT GAS": { psv: 0.5048, spread: 0.075, costoFisso: 10 },
+        "SPRINT BUSINESS LUCE": { pun: 0.1257, spreadLuce: 0.016, costoFisso: 13 },
+        "SPRINT BUSINESS GAS": { psv: 0.5048, spread: 0.081, costoFisso: 13 },
+        "ACEA FLEX LUCE": { pun: 0.1257, spreadLuce: 0.03, costoFisso: 9 },
+        "ACEA FLEX GAS": { psv: 0.5048, spread: 0.148, costoFisso: 9 }
+      },
+      luglio: {
+        "SPRINT LUCE": { pun: 0.1542, spreadLuce: 0.0145, costoFisso: 10 },
+        "SPRINT GAS": { psv: 0.6066, spread: 0.075, costoFisso: 10 },
+        "SPRINT BUSINESS LUCE": { pun: 0.1542, spreadLuce: 0.016, costoFisso: 13 },
+        "SPRINT BUSINESS GAS": { psv: 0.6066, spread: 0.081, costoFisso: 13 },
+        "ACEA FLEX LUCE": { pun: 0.1542, spreadLuce: 0.03, costoFisso: 9 },
+        "ACEA FLEX GAS": { psv: 0.6066, spread: 0.148, costoFisso: 9 }
       },
     };
 
@@ -795,8 +905,11 @@
 
     /* Slideshow Offerte in corso */
     const slideInfo = [
-      { src: "assets/offerte-in-corso.jpeg",    download: "offerte-acea-energia.jpeg",  title: "Offerte Luce e Gas" },
-      { src: "assets/acea-fix-dettaglio.png",  download: "acea-fix-dettaglio.png",    title: "Nuova ACEA FIX" }
+      { src: "assets/offerte-in-corso.png",          download: "offerte-acea-energia.png",    title: "Offerte Luce e Gas" },
+      { src: "assets/offerta-fix.png",               download: "offerta-acea-fix.png",        title: "ACEA FIX" },
+      { src: "assets/offerta-sprint-domestico.png",  download: "offerta-sprint-domestico.png", title: "SPRINT Domestico" },
+      { src: "assets/offerta-sprint-business.png",   download: "offerta-sprint-business.png", title: "SPRINT Business" },
+      { src: "assets/offerta-flex.png",              download: "offerta-acea-flex.png",       title: "ACEA FLEX" }
     ];
     let currentSlide = 0;
 
@@ -936,24 +1049,32 @@
     }
 
     function calcolaCosto() {
-      const checkboxes = document.querySelectorAll('input[name="periodoFatturazione"]:checked');
-      const selectedMonths = Array.from(checkboxes).map(cb => cb.value);
+      const periodiDiversi = document.getElementById("periodiDiversi").checked;
 
-      if (selectedMonths.length === 0) {
+      const luceCheckboxes = document.querySelectorAll('input[name="periodoFatturazioneLuce"]:checked');
+      const luceMonths = Array.from(luceCheckboxes).map(cb => cb.value);
+
+      let gasMonths;
+      if (periodiDiversi) {
+        const gasCheckboxes = document.querySelectorAll('input[name="periodoFatturazioneGas"]:checked');
+        gasMonths = Array.from(gasCheckboxes).map(cb => cb.value);
+      } else {
+        gasMonths = luceMonths; // periodo unico, condiviso
+      }
+
+      if (luceMonths.length === 0 && gasMonths.length === 0) {
         alert("Seleziona almeno un mese per il periodo di fatturazione.");
         return;
       }
 
-      const nMonths = selectedMonths.length;
       const tipoCliente = document.getElementById("tipoCliente").value;
       const risultatiOfferte = document.getElementById("risultatiOfferte");
       risultatiOfferte.innerHTML = "";
 
-      // --- Unica modalità: BOLLETTA SCONTRINO ---
+      // --- BOLLETTA SCONTRINO ---
       const kwhFatturati     = parseFloat(document.getElementById("kwhFatturati").value) || 0;
       const quotaConsumiLuce = parseFloat(document.getElementById("quotaConsumiLuce").value) || 0;
       const quotaFissaLuce   = parseFloat(document.getElementById("quotaFissaLuce").value) || 0;
-
       const mcFatturati      = parseFloat(document.getElementById("mcFatturati").value) || 0;
       const quotaConsumiGas  = parseFloat(document.getElementById("quotaConsumiGas").value) || 0;
       const quotaFissaGas    = parseFloat(document.getElementById("quotaFissaGas").value) || 0;
@@ -963,7 +1084,37 @@
       const costoAttualeLuce = quotaConsumiLuce + quotaFissaLuce;
       const costoAttualeGas  = quotaConsumiGas + quotaFissaGas;
 
-      const referenceOffers = offertePerMese[selectedMonths[0]];
+      // Validazione: se ci sono dati per un servizio, deve esserci almeno un mese per quel servizio
+      if (consumoLuce > 0 && luceMonths.length === 0) {
+        alert("Hai inserito dati per la Luce: seleziona almeno un mese nel periodo Luce.");
+        return;
+      }
+      if (consumoGas > 0 && gasMonths.length === 0) {
+        alert("Hai inserito dati per il Gas: seleziona almeno un mese nel periodo Gas.");
+        return;
+      }
+
+      // Banner in evidenza quando i periodi sono diversi
+      const periodiSonoDiversi = periodiDiversi
+        && luceMonths.length > 0
+        && gasMonths.length > 0
+        && JSON.stringify(luceMonths) !== JSON.stringify(gasMonths);
+
+      if (periodiSonoDiversi) {
+        const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+        const fmt = arr => arr.map(cap).join(", ");
+        risultatiOfferte.innerHTML += `
+          <div class="info-periodi-diversi">
+            <span class="titolo">⚡ Analisi con periodi differenziati</span>
+            <span class="riga"><strong>Luce:</strong> ${fmt(luceMonths)}</span>
+            <span class="riga"><strong>Gas:</strong> ${fmt(gasMonths)}</span>
+          </div>
+        `;
+      }
+
+      // Pacchetto di riferimento per individuare le offerte disponibili
+      const refMonth = luceMonths[0] || gasMonths[0];
+      const referenceOffers = offertePerMese[refMonth];
       if (!referenceOffers) {
         alert("Dati offerta non disponibili per il mese selezionato.");
         return;
@@ -979,17 +1130,20 @@
         if (consumoLuce > 0 && consumoGas === 0 && !isLuceOffer) continue;
         if (consumoGas > 0 && consumoLuce === 0 && !isGasOffer) continue;
 
+        // Mesi specifici per la tipologia dell'offerta
+        const monthsForOffer = isLuceOffer ? luceMonths : gasMonths;
+        const nMonths = monthsForOffer.length;
+        if (nMonths === 0) continue;
+
         let sumPun = 0, sumSpreadLuce = 0, sumCostoFissoLuce = 0;
         let sumPsv = 0, sumSpreadGas  = 0, sumCostoFissoGas  = 0;
         let count = 0;
 
-        for (const month of selectedMonths) {
+        for (const month of monthsForOffer) {
           const monthPack = offertePerMese[month];
           if (!monthPack) continue;
-
           const data = monthPack[nomeOfferta];
           if (!data) continue;
-
           count++;
           if (isLuceOffer) {
             sumPun += data.pun;
@@ -1017,7 +1171,7 @@
 
           risultatiOfferte.innerHTML += renderOffertaCard({
             nomeOfferta,
-            periodo: selectedMonths.join(", "),
+            periodo: monthsForOffer.join(", "),
             tipo,
             energyCost,
             fixedCost,
@@ -1043,7 +1197,7 @@
 
           risultatiOfferte.innerHTML += renderOffertaCard({
             nomeOfferta,
-            periodo: selectedMonths.join(", "),
+            periodo: monthsForOffer.join(", "),
             tipo,
             energyCost,
             fixedCost,
@@ -1058,43 +1212,45 @@
 
       // ACEA FIX (DOMESTICO)
       if (tipoCliente === "domestico") {
-        const costoFissoMese = 7.5;
+        const costoFissoMese = 12;
 
-        if (consumoLuce > 0) {
-          const costLuce  = consumoLuce * (0.125 + 0.02);
-          const fixedLuce = costoFissoMese * nMonths;
+        if (consumoLuce > 0 && luceMonths.length > 0) {
+          const nMesi = luceMonths.length;
+          const costLuce  = consumoLuce * (0.10 + 0.02);
+          const fixedLuce = costoFissoMese * nMesi;
           const totalLuce = costLuce + fixedLuce;
 
           risultatiOfferte.innerHTML += renderOffertaCard({
             nomeOfferta: "ACEA FIX LUCE",
-            periodo: selectedMonths.join(", "),
+            periodo: luceMonths.join(", "),
             tipo: "fissa",
             energyCost: costLuce,
             fixedCost: fixedLuce,
             costoTotale: totalLuce,
             costoAttuale: costoAttualeLuce,
             costoFissoMese,
-            nMesi: nMonths,
-            indici: "Prezzo bloccato: 0,1250 €/kWh + dispacciamento 0,0200 €/kWh"
+            nMesi,
+            indici: "Prezzo bloccato: 0,1000 €/kWh + dispacciamento 0,0200 €/kWh"
           });
         }
 
-        if (consumoGas > 0) {
-          const costGas  = consumoGas * 0.52;
-          const fixedGas = costoFissoMese * nMonths;
+        if (consumoGas > 0 && gasMonths.length > 0) {
+          const nMesi = gasMonths.length;
+          const costGas  = consumoGas * 0.45;
+          const fixedGas = costoFissoMese * nMesi;
           const totalGas = costGas + fixedGas;
 
           risultatiOfferte.innerHTML += renderOffertaCard({
             nomeOfferta: "ACEA FIX GAS",
-            periodo: selectedMonths.join(", "),
+            periodo: gasMonths.join(", "),
             tipo: "fissa",
             energyCost: costGas,
             fixedCost: fixedGas,
             costoTotale: totalGas,
             costoAttuale: costoAttualeGas,
             costoFissoMese,
-            nMesi: nMonths,
-            indici: "Prezzo bloccato: 0,5200 €/Smc"
+            nMesi,
+            indici: "Prezzo bloccato: 0,4500 €/Smc"
           });
         }
       }
@@ -1277,7 +1433,7 @@ _Calcolo indicativo riferito alla sola materia energia/gas. Non include IVA, one
     /* Popola i tooltip dei mesi con PUN/PSV dai dati offertePerMese */
     function initMonthTooltips() {
       const formatNum = (n) => n.toFixed(5).replace(".", ",");
-      document.querySelectorAll('#periodoFatturazione input[name="periodoFatturazione"]').forEach(cb => {
+      document.querySelectorAll('.periodo-grid input[type="checkbox"]').forEach(cb => {
         const monthData = offertePerMese[cb.value];
         if (!monthData) return;
         const pun = monthData["SPRINT LUCE"]?.pun;
@@ -1294,6 +1450,79 @@ _Calcolo indicativo riferito alla sola materia energia/gas. Non include IVA, one
     } else {
       initMonthTooltips();
     }
+
+    /* Toggle periodi diversi per Luce e Gas */
+    function togglePeriodiDiversi() {
+      const diversi = document.getElementById("periodiDiversi").checked;
+      document.getElementById("periodoGasContainer").style.display = diversi ? "" : "none";
+      document.getElementById("periodoLuceLabel").innerHTML = diversi
+        ? 'PERIODO DI FATTURAZIONE <span class="periodo-label-luce">LUCE</span>'
+        : "PERIODO DI FATTURAZIONE";
+    }
+
+    /* =========================================================
+       PRECOMPILAZIONE DA URL (usata dal Portale Supporto Dealer)
+       Se l'indirizzo contiene #b=<dati bolletta in base64>, riempie
+       i campi, seleziona i mesi e lancia il calcolo automaticamente.
+       Così l'analisi bolletta del portale usa SEMPRE queste formule,
+       senza doverle duplicare altrove.
+       ========================================================= */
+    (function prefillDaBolletta(){
+      function decodeDati(s){
+        try {
+          const b64 = s.replace(/-/g, "+").replace(/_/g, "/");
+          return JSON.parse(decodeURIComponent(escape(atob(b64))));
+        } catch(e){
+          try { return JSON.parse(atob(s)); } catch(e2){ return null; }
+        }
+      }
+      function tick(name, mesi){
+        document.querySelectorAll('input[name="' + name + '"]').forEach(function(cb){
+          cb.checked = (mesi || []).indexOf(cb.value) !== -1;
+        });
+      }
+      function applica(){
+        const m = (location.hash || "").match(/[#&]b=([^&]+)/);
+        if (!m) return;
+        const dati = decodeDati(m[1]);
+        if (!dati) return;
+
+        const set = function(id, v){
+          if (v === undefined || v === null || v === "") return;
+          const el = document.getElementById(id);
+          if (el) el.value = v;
+        };
+        const tc = document.getElementById("tipoCliente");
+        if (tc && dati.tipoCliente) tc.value = dati.tipoCliente;
+        set("nomeCliente", dati.nomeCliente);           // di norma vuoto (nessun dato personale nell'URL)
+        set("kwhFatturati", dati.kwhFatturati);
+        set("quotaConsumiLuce", dati.quotaConsumiLuce);
+        set("quotaFissaLuce", dati.quotaFissaLuce);
+        set("mcFatturati", dati.mcFatturati);
+        set("quotaConsumiGas", dati.quotaConsumiGas);
+        set("quotaFissaGas", dati.quotaFissaGas);
+
+        const mesiLuce = dati.mesiLuce || [];
+        const mesiGas  = dati.mesiGas  || [];
+        const stessi = JSON.stringify(mesiLuce.slice().sort()) === JSON.stringify(mesiGas.slice().sort());
+        const diversi = mesiLuce.length && mesiGas.length && !stessi;
+        const pd = document.getElementById("periodiDiversi");
+        if (diversi && pd){ pd.checked = true; if (typeof togglePeriodiDiversi === "function") togglePeriodiDiversi(); }
+
+        // Quando i periodi NON sono diversi, il comparatore usa i mesi "Luce" anche per il gas.
+        const perLuce = diversi ? mesiLuce : (mesiLuce.length ? mesiLuce : mesiGas);
+        tick("periodoFatturazioneLuce", perLuce);
+        if (diversi) tick("periodoFatturazioneGas", mesiGas);
+
+        if (typeof calcolaCosto === "function"){
+          try { calcolaCosto(); } catch(e){}
+          const res = document.getElementById("risultatiOfferte");
+          if (res) setTimeout(function(){ res.scrollIntoView({ behavior: "smooth", block: "start" }); }, 200);
+        }
+      }
+      if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", applica);
+      else applica();
+    })();
   </script>
 </body>
 </html>
